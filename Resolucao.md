@@ -504,6 +504,7 @@ FinalState = [[1, 3, 4, 2], [4, 2, 1, 3], [2, 4, 3, 1], [3, 1, 2, 4]],
 InitialState = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
 Plan = [fill(1,1,1), fill(1,2,3), fill(1,3,4), fill(1,4,2), fill(2,1,4), fill(2,2,2), fill(2,3,1), fill(2,4,3), fill(3,1,2), fill(3,2,4), fill(3,3,3), fill(3,4,1), fill(4,1,3), fill(4,2,1), fill(4,3,2), fill(4,4,4)]
 ```
+___
 
 Um código alternativo, baseado no original corrigido foi pensado, que resolve um puzzle 4x4 tipo Sudoku, começando a partir de um `estado_inicial` parcialmente preenchido.
 
