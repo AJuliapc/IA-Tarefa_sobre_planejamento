@@ -663,6 +663,16 @@ Enquanto a Análise Meios-Fins (MEA) planeja **para frente**, partindo do estado
 
 Para a codificação feita com Means-Ends foi gerado uma codificação usando Goal Regression
 
+Comando para compilar 
+
+```prolog 
+InitialState = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],
+   FinalState = [[1, 3, 4, 2], [4, 2, 1, 3], [2, 4, 3, 1], [3, 1, 2, 4]],
+   plan(InitialState, FinalState, Plan).
+```
+
+Codificação
+
 ```prolog 
 % Define numbers 1-4
 num(1). num(2). num(3). num(4).
