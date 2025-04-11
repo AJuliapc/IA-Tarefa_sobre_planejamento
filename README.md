@@ -1,5 +1,14 @@
 # Tarefa de Planejamento - Inteligência Artifical 
 
+Integrantes: 
+* Alberth Lima
+* Ana Júlia Pereira Corrêa
+* Daniel Gonzalez
+* Guilherme Maciel
+* Stepheson Custódio
+* Júlio Melo Campos
+____
+
 Análise um código em Prolog para planejamento, que não está funcionando, e:
   * Explique o porquê não funciona
   * Indique como pode ser alterado para funcionar
