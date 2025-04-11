@@ -341,6 +341,14 @@ Ele usa **backtracking**, mas de forma **guiada pelo objetivo**:
 
 Essa priorização do "número alvo" direciona a busca eficientemente para o `FinalState` desejado, ao invés de explorar muitas possibilidades irrelevantes.
 
+Saída retornada 
+
+```prolog
+FinalState = [[1, 3, 4, 2], [4, 2, 1, 3], [2, 4, 3, 1], [3, 1, 2, 4]],
+InitialState = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+Plan = [fill(1,1,1), fill(1,2,3), fill(1,3,4), fill(1,4,2), fill(2,1,4), fill(2,2,2), fill(2,3,1), fill(2,4,3), fill(3,1,2), fill(3,2,4), fill(3,3,3), fill(3,4,1), fill(4,1,3), fill(4,2,1), fill(4,3,2), fill(4,4,4)]
+```
+
 * Modificação com means-ends
 
 ```prolog
@@ -487,5 +495,163 @@ replace([H|T], Pos, X, [H|NewT]) :-
     Pos > 1,
     NextPos is Pos - 1,
     replace(T, NextPos, X, NewT).
+```
+
+Saída retornada 
+
+```prolog 
+FinalState = [[1, 3, 4, 2], [4, 2, 1, 3], [2, 4, 3, 1], [3, 1, 2, 4]],
+InitialState = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+Plan = [fill(1,1,1), fill(1,2,3), fill(1,3,4), fill(1,4,2), fill(2,1,4), fill(2,2,2), fill(2,3,1), fill(2,4,3), fill(3,1,2), fill(3,2,4), fill(3,3,3), fill(3,4,1), fill(4,1,3), fill(4,2,1), fill(4,3,2), fill(4,4,4)]
+```
+___
+
+Um código alternativo, baseado no original corrigido foi pensado, que resolve um puzzle 4x4 tipo Sudoku, começando a partir de um `estado_inicial` parcialmente preenchido.
+
+Ele utiliza **backtracking simples**:
+
+1.  Encontra a **primeira célula vazia**.
+2.  Tenta preenchê-la com números de 1 a 4, um por vez.
+3.  Para cada número, verifica se ele é **válido** (não causa conflitos na linha, coluna ou bloco 2x2).
+4.  Se for válido, preenche a célula e continua recursivamente para a próxima célula vazia.
+5.  Se um número não for válido ou levar a um beco sem saída, ele **volta atrás (backtrack)** e tenta o próximo número ou a decisão anterior.
+
+O processo para quando encontra a **primeira solução completa e válida**, retornando a sequência de ações (`fill`) que levou a essa solução. Ele não busca um `FinalState` específico pré-definido, mas sim qualquer solução válida.
+
+Comando para compilar 
+
+```prolog 
+estado_inicial(Ini), plan(Ini, Final, Plano), print_state(Final), writeln(Plano).
+```
+
+Codificação 
+
+```prolog 
+% Define numbers 1-4
+num(1). num(2). num(3). num(4).
+
+% Main planning predicate
+plan(InitialState, FinalState, Plan) :-
+    plan_step(InitialState, FinalState, [], RevPlan),
+    reverse(RevPlan, Plan).
+
+% Base case - verifica se o estado atual é um estado final válido
+plan_step(State, State, Plan, Plan) :-
+    is_complete(State).
+
+% Recursive case
+plan_step(CurrentState, FinalState, PartialPlan, Plan) :-
+    find_empty(CurrentState, Row, Col),
+    num(Num),
+    is_valid(CurrentState, Row, Col, Num),
+    fill_cell(CurrentState, Row, Col, Num, NewState),
+    Action = fill(Row, Col, Num),
+    plan_step(NewState, FinalState, [Action|PartialPlan], Plan).
+
+% Verifica se o tabuleiro está completo e válido
+is_complete(State) :-
+    length(State, 4),
+    maplist(is_valid_row, State),
+    transpose(State, Columns),
+    maplist(is_valid_row, Columns).
+
+is_valid_row(Row) :-
+    length(Row, 4),
+    sort(Row, [1,2,3,4]).
+
+% Find first empty cell
+find_empty(State, Row, Col) :-
+    nth1(Row, State, RowList),
+    nth1(Col, RowList, 0).
+
+% Validity check
+is_valid(State, Row, Col, Num) :-
+    \+ conflicts_row(State, Row, Num),
+    \+ conflicts_column(State, Col, Num),
+    \+ conflicts_box(State, Row, Col, Num).
+
+% Check row conflicts
+conflicts_row(State, Row, Num) :-
+    nth1(Row, State, RowList),
+    member(Num, RowList).
+
+% Check column conflicts
+conflicts_column(State, Col, Num) :-
+    transpose(State, Transposed),
+    nth1(Col, Transposed, ColList),
+    member(Num, ColList).
+
+% Check box conflicts
+conflicts_box(State, Row, Col, Num) :-
+    BoxRow is ((Row - 1) // 2) * 2 + 1,
+    BoxCol is ((Col - 1) // 2) * 2 + 1,
+    subgrid(State, BoxRow, BoxCol, Subgrid),
+    member(Num, Subgrid).
+
+% Extract subgrid
+subgrid(State, BoxRow, BoxCol, Subgrid) :-
+    BoxRow1 is BoxRow + 1,
+    BoxCol1 is BoxCol + 1,
+    nth1(BoxRow, State, Row1),
+    nth1(BoxRow1, State, Row2),
+    nth1(BoxCol, Row1, V1),
+    nth1(BoxCol1, Row1, V2),
+    nth1(BoxCol, Row2, V3),
+    nth1(BoxCol1, Row2, V4),
+    Subgrid = [V1,V2,V3,V4].
+
+% Fill a cell
+fill_cell(State, Row, Col, Num, NewState) :-
+    nth1(Row, State, RowList),
+    replace(RowList, Col, Num, NewRowList),
+    replace(State, Row, NewRowList, NewState).
+
+% Replace helper
+replace([_|T], 1, X, [X|T]).
+replace([H|T], Pos, X, [H|NewT]) :-
+    Pos > 1,
+    NextPos is Pos - 1,
+    replace(T, NextPos, X, NewT).
+
+% Transpose a matrix
+transpose([], []).
+transpose([F|Fs], Ts) :-
+    transpose(F, [F|Fs], Ts).
+
+transpose([], _, []).
+transpose([_|Rs], Ms, [Ts|Tss]) :-
+    lists_firsts_rests(Ms, Ts, Ms1),
+    transpose(Rs, Ms1, Tss).
+
+lists_firsts_rests([], [], []).
+lists_firsts_rests([[F|Os]|Rest], [F|Fs], [Os|Oss]) :-
+    lists_firsts_rests(Rest, Fs, Oss).
+
+% Print the state
+print_state([]).
+print_state([Row|Rest]) :-
+    writeln(Row),
+    print_state(Rest).
+
+% Estado inicial
+estado_inicial([
+    [1,0,0,4],
+    [0,0,0,0],
+    [0,0,0,0],
+    [3,0,0,2]
+]).
+```
+
+Saída retornada 
+
+```prolog 
+[1, 2, 3, 4]
+[4, 3, 2, 1]
+[2, 1, 4, 3]
+[3, 4, 1, 2]
+[fill(1,2,2), fill(1,3,3), fill(2,1,4), fill(2,2,3), fill(2,3,2), fill(2,4,1), fill(3,1,2), fill(3,2,1), fill(3,3,4), fill(3,4,3), fill(4,2,4), fill(4,3,1)]
+Final = [[1, 2, 3, 4], [4, 3, 2, 1], [2, 1, 4, 3], [3, 4, 1, 2]],
+Ini = [[1, 0, 0, 4], [0, 0, 0, 0], [0, 0, 0, 0], [3, 0, 0, 2]],
+Plano = [fill(1,2,2), fill(1,3,3), fill(2,1,4), fill(2,2,3), fill(2,3,2), fill(2,4,1), fill(3,1,2), fill(3,2,1), fill(3,3,4), fill(3,4,3), fill(4,2,4), fill(4,3,1)]
 ```
 
