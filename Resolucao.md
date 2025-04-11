@@ -504,7 +504,6 @@ FinalState = [[1, 3, 4, 2], [4, 2, 1, 3], [2, 4, 3, 1], [3, 1, 2, 4]],
 InitialState = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
 Plan = [fill(1,1,1), fill(1,2,3), fill(1,3,4), fill(1,4,2), fill(2,1,4), fill(2,2,2), fill(2,3,1), fill(2,4,3), fill(3,1,2), fill(3,2,4), fill(3,3,3), fill(3,4,1), fill(4,1,3), fill(4,2,1), fill(4,3,2), fill(4,4,4)]
 ```
-___
 
 Um código alternativo, baseado no original corrigido foi pensado, que resolve um puzzle 4x4 tipo Sudoku, começando a partir de um `estado_inicial` parcialmente preenchido.
 
@@ -655,3 +654,8 @@ Ini = [[1, 0, 0, 4], [0, 0, 0, 0], [0, 0, 0, 0], [3, 0, 0, 2]],
 Plano = [fill(1,2,2), fill(1,3,3), fill(2,1,4), fill(2,2,3), fill(2,3,2), fill(2,4,1), fill(3,1,2), fill(3,2,1), fill(3,3,4), fill(3,4,3), fill(4,2,4), fill(4,3,1)]
 ```
 
+# **4. Estude o método Goal regression e explique sua diferença para means-ends**
+
+Enquanto a Análise Meios-Fins (MEA) planeja **para frente**, partindo do estado inicial e focando em identificar **diferenças** com o objetivo para selecionar **ações (meios)** que as reduzam (criando **sub-objetivos** se as pré-condições da ação falharem), a Regressão de Objetivos (Goal Regression) trabalha **para trás**, partindo do estado final e buscando ações cujos **efeitos** satisfaçam o objetivo (ou sub-objetivo atual), usando as **pré-condições** dessas ações como o novo sub-objetivo a ser alcançado no passo anterior, construindo assim o plano na ordem inversa.
+
+# **5. Implemente goal regression na sua implementação anterior**
