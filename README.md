@@ -1,12 +1,12 @@
 # Tarefa de Planejamento - Inteligência Artifical 
 
 Integrantes: 
-* Alberth Lima
+* Alberth Viana de Lima
 * Ana Júlia Pereira Corrêa
 * Daniel Gonzalez
 * Guilherme Maciel
 * Stepheson Custódio
-* Júlio Melo Campos
+* Júlio Campos
 ____
 
 Análise um código em Prolog para planejamento, que não está funcionando, e:
