@@ -146,7 +146,7 @@ Para corrigir os erros enumerados e permitir que o código seja compilado e exec
 
 # **3. Implemente a mudança e mostre funcionando**
 
-Comnado para rodar a codificação
+Comando para rodar a codificação
 
 ```prolog 
 InitialState = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],
